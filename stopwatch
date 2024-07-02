@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+        .stopwatch {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .stopwatch h1 {
+            margin: 0 0 20px;
+            font-size: 2rem;
+        }
+        .stopwatch #display {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .stopwatch button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff7e5f;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .stopwatch button:hover {
+            background-color: #feb47b;
+        }
+        .lap-times {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .lap-times ul {
+            list-style: none;
+            padding: 0;
+        }
+        .lap-times li {
+            background-color: #f1f1f1;
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch">
+        <h1>Stopwatch</h1>
+        <div id="display">00:00:00</div>
+        <button id="startPauseBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+        <button id="lapBtn">Lap</button>
+        <div class="lap-times">
+            <ul id="laps"></ul>
+        </div>
+    </div>
+    <script>
+        let startTime, updatedTime, difference;
+        let tInterval, running = false;
+        const display = document.getElementById('display');
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const lapBtn = document.getElementById('lapBtn');
+        const laps = document.getElementById('laps');
+
+        startPauseBtn.addEventListener('click', startPause);
+        resetBtn.addEventListener('click', reset);
+        lapBtn.addEventListener('click', lap);
+
+        function startPause() {
+            if (!running) {
+                startTime = new Date().getTime();
+                tInterval = setInterval(getShowTime, 10);
+                startPauseBtn.textContent = 'Pause';
+                running = true;
+            } else {
+                clearInterval(tInterval);
+                running = false;
+                startPauseBtn.textContent = 'Start';
+            }
+        }
+
+        function reset() {
+            clearInterval(tInterval);
+            display.textContent = '00:00:00';
+            startPauseBtn.textContent = 'Start';
+            running = false;
+            laps.innerHTML = '';
+        }
+
+        function lap() {
+            if (running) {
+                const li = document.createElement('li');
+                li.textContent = display.textContent;
+                laps.appendChild(li);
+            }
+        }
+
+        function getShowTime() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            const milliseconds = Math.floor((difference % 1000) / 10);
+
+            display.textContent =
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds) + ':' +
+                (milliseconds < 10 ? '0' + milliseconds : milliseconds);
+        }
+    </script>
+</body>
+</html>
